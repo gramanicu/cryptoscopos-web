@@ -1,10 +1,6 @@
 {
-	"bracketSameLine": true,
-	"useTabs": false,
+	"useTabs": true,
 	"singleQuote": true,
-	"trailingComma": "es5",
-	"printWidth": 120,
-	"tabWidth": 4,
-	"bracketSpacing": true,
-	"arrowParens": "avoid"
+	"trailingComma": "none",
+	"printWidth": 100
 }
