@@ -9,6 +9,7 @@
 	let isLoading = true;
 
 	onMount(async () => {
+		console.log(user);
 		auth0Client = await auth.createClient();
 
 		isAuthenticated.set(await auth0Client.isAuthenticated());
