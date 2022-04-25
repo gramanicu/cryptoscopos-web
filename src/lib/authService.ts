@@ -10,7 +10,8 @@ async function createClient() {
 		const auth0Client = await createAuth0Client({
 			domain: config.domain,
 			client_id: config.clientId,
-			audience: config.audience
+			audience: config.audience,
+			redirect_uri: window.location.origin
 		});
 
 		return auth0Client;
@@ -18,7 +19,8 @@ async function createClient() {
 		const auth0Client = await createAuth0Client({
 			domain: vars.auth0.domain,
 			client_id: vars.auth0.clientId,
-			audience: vars.auth0.audience
+			audience: vars.auth0.audience,
+			redirect_uri: window.location.origin
 		});
 
 		return auth0Client;
@@ -44,7 +46,9 @@ async function loginWithPopup(client: Auth0Client, options: PopupLoginOptions) {
 }
 
 function logout(client: Auth0Client) {
-	return client.logout();
+	return client.logout({
+		returnTo: window.location.origin
+	});
 }
 
 const auth = {
