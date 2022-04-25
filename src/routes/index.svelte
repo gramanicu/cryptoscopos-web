@@ -28,7 +28,7 @@
 </script>
 
 <script lang="ts">
-	import { hasContext, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import auth from '$lib/authService';
 	import { isAuthenticated, user } from '$lib/store';
 	import type { Auth0Client } from '@auth0/auth0-spa-js';
@@ -42,8 +42,9 @@
 
 	onMount(async () => {
 		auth0Client = await auth.createClient();
+		const isAuth = await auth0Client.isAuthenticated();
 
-		isAuthenticated.set(await auth0Client.isAuthenticated());
+		isAuthenticated.set(isAuth);
 		isLoading = false;
 
 		const usr = await auth0Client.getUser();
@@ -61,19 +62,15 @@
 	}
 
 	const callApi = async () => {
-		try {
-			const token = await auth0Client.getTokenSilently();
+		const token = await auth0Client.getTokenSilently();
 
-			const res = await fetch(`${vars.api.baseUrl}/coins`, {
-				headers: {
-					Authorization: `Bearer ${token}`
-				}
-			});
+		const res = await fetch(`${vars.api.baseUrl}/coins`, {
+			headers: {
+				Authorization: `Bearer ${token}`
+			}
+		});
 
-			const data = await res.json();
-		} catch (e) {
-			console.error(e);
-		}
+		const data = await res.json();
 	};
 </script>
 

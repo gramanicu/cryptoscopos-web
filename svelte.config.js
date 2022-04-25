@@ -6,6 +6,9 @@ const config = {
 	preprocess: preprocess({
 		implementation: 'sass'
 	}),
+	compilerOptions: {
+		enableSourcemap: true
+	},
 
 	kit: {
 		adapter: adapter()
