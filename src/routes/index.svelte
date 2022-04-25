@@ -1,12 +1,44 @@
-<script type="ts">
-	import { onMount } from 'svelte';
+<script context="module" lang="ts">
+	/** @type {import('@sveltejs/kit').Load} */
+	export async function load({ fetch }) {
+		const res = await fetch('https://jsonplaceholder.typicode.com/posts');
+
+		if (res.ok) {
+			const data: Entry[] = await res.json();
+			return {
+				props: {
+					data: data.slice(0, 10)
+				}
+			};
+		}
+
+		return {
+			status: res.status,
+			error: new Error("Coulnd't fetch")
+			// redirect: '/smth'
+		};
+	}
+
+	type Entry = {
+		userId: number;
+		id: number;
+		title: string;
+		body: string;
+	};
+</script>
+
+<script lang="ts">
+	import { hasContext, onMount } from 'svelte';
 	import auth from '$lib/authService';
 	import { isAuthenticated, user } from '$lib/store';
 	import type { Auth0Client } from '@auth0/auth0-spa-js';
 	import { scale } from 'svelte/transition';
+	import { vars } from '$lib/variables';
 
 	let auth0Client: Auth0Client;
 	let isLoading = true;
+
+	export let data: Entry[];
 
 	onMount(async () => {
 		console.log(user);
@@ -17,7 +49,6 @@
 
 		const usr = await auth0Client.getUser();
 		if (usr) {
-			console.log(usr);
 			user.set(usr);
 		}
 	});
@@ -29,6 +60,22 @@
 	function logout() {
 		auth.logout(auth0Client);
 	}
+
+	const callApi = async () => {
+		try {
+			const token = await auth0Client.getTokenSilently();
+
+			const res = await fetch(`${vars.api.baseUrl}/coins`, {
+				headers: {
+					Authorization: `Bearer ${token}`
+				}
+			});
+
+			const data = await res.json();
+		} catch (e) {
+			console.error(e);
+		}
+	};
 </script>
 
 <main class="min-h-screen min-w-full flex flex-col justify-center items-center">
@@ -47,10 +94,21 @@
 					src={$user.picture}
 				/>
 				<p class="self-center mb-4">{$user.name}</p>
-				<button
-					class="bg-purple-800 text-purple-100 hover:bg-purple-500 rounded-lg p-2 text-sm w-fit px-6 self-end"
-					on:click={logout}>Log Out</button
-				>
+				<ul>
+					{#each data as point}
+						<li>{point.title}</li>
+					{/each}
+				</ul>
+				<div class="flex flex-row gap-4 justify-center">
+					<button
+						class="bg-purple-100 text-purple-900 hover:bg-purple-500 rounded-lg p-2 text-sm w-fit px-6 "
+						on:click={callApi}>Call API</button
+					>
+					<button
+						class="bg-purple-800 text-purple-100 hover:bg-purple-500 rounded-lg p-2 text-sm w-fit px-6"
+						on:click={logout}>Log Out</button
+					>
+				</div>
 			{:else}
 				<button
 					class="bg-purple-800 text-purple-100 hover:bg-purple-500 rounded-lg p-2 text-lg w-fit px-6 self-center"

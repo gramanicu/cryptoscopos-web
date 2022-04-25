@@ -3,12 +3,26 @@ import { user, isAuthenticated, popupOpen } from '$lib/store';
 import { vars } from '$lib/variables';
 
 async function createClient() {
-	const auth0Client = await createAuth0Client({
-		domain: vars.domain,
-		client_id: vars.clientId
-	});
+	const res = await fetch(`${vars.api.baseUrl}/auth/config`);
 
-	return auth0Client;
+	if (res.ok) {
+		const config = await res.json();
+		const auth0Client = await createAuth0Client({
+			domain: config.domain,
+			client_id: config.clientId,
+			audience: config.audience
+		});
+
+		return auth0Client;
+	} else {
+		const auth0Client = await createAuth0Client({
+			domain: vars.auth0.domain,
+			client_id: vars.auth0.clientId,
+			audience: vars.auth0.audience
+		});
+
+		return auth0Client;
+	}
 }
 
 async function loginWithPopup(client: Auth0Client, options: PopupLoginOptions) {
