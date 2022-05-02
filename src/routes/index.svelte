@@ -1,6 +1,6 @@
 <script context="module" lang="ts">
-	/** @type {import('@sveltejs/kit').Load} */
-	export async function load({ fetch }) {
+	import type { LoadInput } from '@sveltejs/kit';
+	export async function load({ fetch }: LoadInput) {
 		const res = await fetch('https://jsonplaceholder.typicode.com/posts');
 
 		if (res.ok) {
