@@ -32,4 +32,15 @@
 	export let coins: Coin[];
 </script>
 
-<main class="min-h-screen min-w-full flex flex-col justify-center items-center" />
+<main class="min-h-screen min-w-full flex flex-col justify-center items-center bg-slate-100">
+	<div class="mb-auto bg-black text-white font-light text-sm w-full text-center p-1">
+		We are still in <b>beta</b> !
+	</div>
+	<section>Hero section</section>
+	<section>Stats section</section>
+	<section><a class="underline" href="/discord">Discord </a>section</section>
+	<section>Contact section</section>
+	<footer class="mt-auto w-full bg-black text-white font-light text-sm p-2 text-center">
+		&copy; Copyright 2022, Grama Nicolae
+	</footer>
+</main>
