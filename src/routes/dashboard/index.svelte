@@ -1,34 +1,19 @@
 <script lang="ts">
-	import { hasContext, onMount } from 'svelte';
 	import auth from '$lib/authService';
 	import { isAuthenticated, user } from '$lib/store';
-	import type { Auth0Client } from '@auth0/auth0-spa-js';
 	import { scale } from 'svelte/transition';
 	import { vars } from '$lib/variables';
 	import type { Coin } from '$lib/types';
+	import type { Auth0Client } from '@auth0/auth0-spa-js';
+	import { onMount } from 'svelte';
 
-	let auth0Client: Auth0Client;
 	let isLoading = true;
+	let auth0Client: Auth0Client;
 
 	onMount(async () => {
 		auth0Client = await auth.createClient();
-
-		isAuthenticated.set(await auth0Client.isAuthenticated());
 		isLoading = false;
-
-		const usr = await auth0Client.getUser();
-		if (usr) {
-			user.set(usr);
-		}
 	});
-
-	function login() {
-		auth.loginWithPopup(auth0Client, {});
-	}
-
-	function logout() {
-		auth.logout(auth0Client, { returnTo: window.location.origin });
-	}
 
 	const callApi = async () => {
 		try {
@@ -70,16 +55,7 @@
 						class="bg-purple-100 text-purple-900 hover:bg-purple-500 rounded-lg p-2 text-sm w-fit px-6 "
 						on:click={callApi}>Call API</button
 					>
-					<button
-						class="bg-purple-800 text-purple-100 hover:bg-purple-500 rounded-lg p-2 text-sm w-fit px-6"
-						on:click={logout}>Log Out</button
-					>
 				</div>
-			{:else}
-				<button
-					class="bg-purple-800 text-purple-100 hover:bg-purple-500 rounded-lg p-2 text-lg w-fit px-6 self-center"
-					on:click={login}>Log In</button
-				>
 			{/if}
 		</div>
 	{:else}

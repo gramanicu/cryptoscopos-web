@@ -23,29 +23,19 @@
 </script>
 
 <script lang="ts">
-	import '../app.scss';
+	import '$scss/app.scss';
 	import type { Auth0Client } from '@auth0/auth0-spa-js';
 	import { onMount } from 'svelte';
 	import auth from '$lib/authService';
 	import { isAuthenticated, user } from '$lib/store';
 	import { goto } from '$app/navigation';
+	import Logo from '$components/logo.svelte';
 
 	export let coinCount: number;
 	export let users: number = 100;
 	export let dataPoints: number = 100;
 
 	let auth0Client: Auth0Client;
-
-	onMount(async () => {
-		auth0Client = await auth.createClient();
-
-		isAuthenticated.set(await auth0Client.isAuthenticated());
-
-		const usr = await auth0Client.getUser();
-		if (usr) {
-			user.set(usr);
-		}
-	});
 
 	async function login() {
 		if (!auth0Client) {
@@ -137,9 +127,7 @@
 	</div>
 	<nav class="self-start px-4 w-full bg-slate-100 shadow-lg border-b-2 border-gray-300">
 		<div class="limited-section flex flex-row items-center justify-between p-2">
-			<a href="/" class="text-2xl select-none prose"
-				><span class="text-primary">Crypto</span><span>scopos</span></a
-			>
+			<a href="/" class="text-2xl select-none prose"><Logo secondary={'gray-500'} /></a>
 			<div>
 				<button
 					on:click={() => login()}
