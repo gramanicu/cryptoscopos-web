@@ -1,5 +1,5 @@
 <script>
-	import '../app.scss';
+	import '../../app.scss';
 </script>
 
 <div class="w-full h-full min-h-screen overflow-hidden main-container">
