@@ -26,6 +26,7 @@
 	let menuOpened = false;
 
 	function highlighedLink(url: string, currentUrl: string) {
+		menuOpened = false;
 		return currentUrl === url;
 	}
 
@@ -48,6 +49,10 @@
 		}
 	];
 </script>
+
+<svelte:head>
+	<link rel="icon" href="./favicon.png" />
+</svelte:head>
 
 {#if isAuthenticated}
 	<nav class="bg-black border-b-2 border-primary sticky top-0 md:relative">
