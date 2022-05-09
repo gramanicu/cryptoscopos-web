@@ -1,14 +1,18 @@
 import { vars } from '$lib/variables';
+import { get } from 'svelte/store';
+import { auth0Client } from './store';
 
-export const callApiAuth = async (url: string, method: string, token?: string): Promise<string> => {
+export const callApiAuth = async (url: string, method: string): Promise<string> => {
 	try {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		let headers: any = {};
+		let token = '';
 
-		if (token) {
-			const bearer = 'Bearer ' + token;
-			headers = { Authorization: bearer };
+		const client = get(auth0Client);
+		if (client) {
+			token = await client.getTokenSilently();
 		}
+
+		const bearer = 'Bearer ' + token;
+		const headers = { Authorization: bearer };
 
 		const res = await fetch(`${vars.api.baseUrl}${url}`, {
 			headers: headers,

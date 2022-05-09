@@ -135,11 +135,3 @@
 		&copy; Copyright 2022, Grama Nicolae
 	</footer>
 {/if}
-
-<style lang="scss" global>
-	body {
-		@apply flex;
-		@apply flex-col;
-		@apply min-h-screen;
-	}
-</style>

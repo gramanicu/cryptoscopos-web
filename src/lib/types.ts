@@ -3,6 +3,7 @@ export interface Coin {
 	coingeckoId: string;
 	symbol: string;
 	name: string;
+	information?: CoinInformation;
 }
 
 export interface Account {
@@ -11,4 +12,10 @@ export interface Account {
 	coinId: string;
 	userId: string;
 	coin?: Coin;
+}
+
+export interface CoinInformation {
+	homepage: string;
+	image: string;
+	description: string;
 }

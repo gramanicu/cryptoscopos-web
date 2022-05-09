@@ -25,9 +25,8 @@
 <script lang="ts">
 	import '$scss/app.scss';
 	import type { Auth0Client } from '@auth0/auth0-spa-js';
-	import { onMount } from 'svelte';
 	import auth from '$lib/authService';
-	import { auth0Client, isAuthenticated, user } from '$lib/store';
+	import { auth0Client, isAuthenticated } from '$lib/store';
 	import { goto } from '$app/navigation';
 	import Logo from '$components/logo.svelte';
 

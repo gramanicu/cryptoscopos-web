@@ -20,7 +20,7 @@
 			const token = await client.getTokenSilently();
 
 			try {
-				accounts = JSON.parse(await callApiAuth('/accounts', 'get', token));
+				accounts = JSON.parse(await callApiAuth('/accounts', 'get'));
 			} catch (e) {
 				console.error(e);
 			}
