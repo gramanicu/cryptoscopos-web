@@ -2,7 +2,7 @@ import { vars } from '$lib/variables';
 import { get } from 'svelte/store';
 import { auth0Client } from './store';
 
-export const callApiAuth = async (url: string, method: string): Promise<string> => {
+export const callApiAuth = async (url: string, method: string, body?: string): Promise<string> => {
 	try {
 		let token = '';
 
@@ -16,7 +16,8 @@ export const callApiAuth = async (url: string, method: string): Promise<string> 
 
 		const res = await fetch(`${vars.api.baseUrl}${url}`, {
 			headers: headers,
-			method
+			method,
+			body
 		});
 
 		if (res.ok) {

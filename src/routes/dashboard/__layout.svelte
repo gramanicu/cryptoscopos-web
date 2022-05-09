@@ -64,12 +64,16 @@
 							menuOpened = !menuOpened;
 						}}
 						type="button"
-						class="inline-flex items-center justify-center rounded-md text-gray-400 hover:text-white focus:outline-none "
+						class="inline-flex items-center justify-center rounded-md transition-colors duration-300 text-gray-400 hover:text-white focus:outline-none "
 						aria-controls="mobile-menu"
 						aria-expanded="false"
 					>
 						<span class="sr-only">Open main menu</span>
-						<Icon src={!menuOpened ? Menu : X} theme="solid" class="h-6 w-6 color-gray-50" />
+						<Icon
+							src={!menuOpened ? Menu : X}
+							theme="solid"
+							class="h-6 w-6 transition-colors duration-300 text-gray-400 hover:text-white"
+						/>
 					</button>
 				</div>
 				<div class="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
@@ -83,7 +87,7 @@
 									href={link.url}
 									class="{highlighedLink(link.url, $page.url.pathname)
 										? 'bg-primary border-b border-primary'
-										: 'bg-transparent border-secondary hover:bg-secondary hover:border-b'}  rounded-t-lg h-full  text-white  px-4 py-2 text-sm font-medium"
+										: 'bg-transparent border-transparent hover:border-secondary hover:bg-secondary border-b'} rounded-t-lg h-full  text-white  px-4 py-2 text-sm font-medium"
 									aria-current="page">{link.name}</a
 								>
 							{/each}
@@ -96,14 +100,22 @@
 						class="hidden md:inline-block p-1 rounded-full text-gray-400 hover:text-white focus:outline-none"
 					>
 						<span class="sr-only">View notifications</span>
-						<Icon src={Bell} theme="solid" class="h-6 w-6 color-gray-50" />
+						<Icon
+							src={Bell}
+							theme="solid"
+							class="h-6 w-6  transition-colors duration-300 text-gray-400 hover:text-white"
+						/>
 					</button>
 					<div class="inline-flex items-center justify-center ml-1 md:ml-3">
 						<button
 							on:click={() => logout()}
 							class="sm:py-2 sm:px-4 text-sm bg-transparent transition-colors duration-500 border-primary text-gray-400 hover:text-white md:rounded-t-lg md:hover:bg-secondary"
 						>
-							<Icon src={Logout} theme="solid" class="sm:hidden h-6 w-6 color-gray-50" />
+							<Icon
+								src={Logout}
+								theme="solid"
+								class="sm:hidden h-6 w-6 transition-colors duration-300 text-gray-400 hover:text-white"
+							/>
 							<span class="hidden sm:inline-block sm:text-white">Sign out</span></button
 						>
 					</div>
