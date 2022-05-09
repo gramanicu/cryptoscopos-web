@@ -6,27 +6,32 @@ import createAuth0Client, {
 } from '@auth0/auth0-spa-js';
 import { user, isAuthenticated, popupOpen } from '$lib/store';
 import { vars } from '$lib/variables';
+import { auth0Client } from './store';
 
 async function createClient() {
 	const res = await fetch(`${vars.api.baseUrl}/auth/config`);
 
 	if (res.ok) {
 		const config = await res.json();
-		const auth0Client = await createAuth0Client({
+		const client = await createAuth0Client({
 			domain: config.domain,
 			client_id: config.clientId,
-			audience: config.audience
+			audience: config.audience,
+			useRefreshTokens: true
 		});
 
-		return auth0Client;
+		auth0Client.set(client);
+		return client;
 	} else {
-		const auth0Client = await createAuth0Client({
+		const client = await createAuth0Client({
 			domain: vars.auth0.domain,
 			client_id: vars.auth0.clientId,
-			audience: vars.auth0.audience
+			audience: vars.auth0.audience,
+			useRefreshTokens: true
 		});
 
-		return auth0Client;
+		auth0Client.set(client);
+		return client;
 	}
 }
 
@@ -59,6 +64,7 @@ async function loginWithPopup(client: Auth0Client, options: PopupLoginOptions) {
 		}
 	} catch (e) {
 		// eslint-disable-next-line
+		console.log('asd');
 		console.error(e);
 	} finally {
 		popupOpen.set(false);

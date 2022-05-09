@@ -2,25 +2,24 @@
 	import '$scss/app.scss';
 	import { onMount } from 'svelte';
 	import auth from '$lib/authService';
-	import { isAuthenticated } from '$lib/store';
-	import type { Auth0Client } from '@auth0/auth0-spa-js';
+	import { auth0Client, isAuthenticated } from '$lib/store';
 	import { goto } from '$app/navigation';
 	import { Icon } from '@steeze-ui/svelte-icon';
 	import { Menu, X, Bell, Logout } from '@steeze-ui/heroicons';
 	import Logo from '$components/logo.svelte';
 	import { page } from '$app/stores';
 
-	let auth0Client: Auth0Client;
-
 	onMount(async () => {
-		auth0Client = await auth.createClient();
-		if (!isAuthenticated) {
+		if (!$isAuthenticated) {
 			goto('/');
 		}
 	});
 
 	function logout() {
-		auth.logout(auth0Client, { returnTo: window.location.origin });
+		const client = $auth0Client;
+		if (client) {
+			auth.logout(client, { returnTo: window.location.origin });
+		}
 	}
 
 	let menuOpened = false;

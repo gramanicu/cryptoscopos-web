@@ -27,7 +27,7 @@
 	import type { Auth0Client } from '@auth0/auth0-spa-js';
 	import { onMount } from 'svelte';
 	import auth from '$lib/authService';
-	import { isAuthenticated, user } from '$lib/store';
+	import { auth0Client, isAuthenticated, user } from '$lib/store';
 	import { goto } from '$app/navigation';
 	import Logo from '$components/logo.svelte';
 
@@ -35,14 +35,15 @@
 	export let users: number = 100;
 	export let dataPoints: number = 100;
 
-	let auth0Client: Auth0Client;
+	let client: Auth0Client | null;
 
 	async function login() {
-		if (!auth0Client) {
-			auth0Client = await auth.createClient();
+		client = $auth0Client;
+		if (!client) {
+			client = await auth.createClient();
 		}
 
-		await auth.loginWithPopup(auth0Client, {});
+		await auth.loginWithPopup(client, {});
 
 		if ($isAuthenticated) {
 			goto('/dashboard');

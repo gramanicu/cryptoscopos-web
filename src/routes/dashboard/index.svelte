@@ -1,6 +1,6 @@
 <script lang="ts">
 	import auth from '$lib/authService';
-	import { isAuthenticated, user } from '$lib/store';
+	import { auth0Client, isAuthenticated, user } from '$lib/store';
 	import { scale } from 'svelte/transition';
 	import type { Account, Coin } from '$lib/types';
 	import type { Auth0Client } from '@auth0/auth0-spa-js';
@@ -8,26 +8,22 @@
 	import { callApiAuth } from '$lib/api';
 
 	let isLoading = true;
-	let auth0Client: Auth0Client;
 
 	onMount(async () => {
-		auth0Client = await auth.createClient();
-
-		const newUser = await auth0Client.getUser();
-
-		if (newUser) {
-			user.set(newUser);
-			isAuthenticated.set(true);
-		}
 		isLoading = false;
 	});
 
 	let accounts: Account[] = [];
 	const callApi = async () => {
-		try {
-			accounts = JSON.parse(await callApiAuth('/accounts', 'get'));
-		} catch (e) {
-			console.error(e);
+		const client = $auth0Client;
+		if (client) {
+			const token = await client.getTokenSilently();
+
+			try {
+				accounts = JSON.parse(await callApiAuth('/accounts', 'get', token));
+			} catch (e) {
+				console.error(e);
+			}
 		}
 	};
 </script>

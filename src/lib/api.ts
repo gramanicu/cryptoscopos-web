@@ -1,14 +1,17 @@
 import { vars } from '$lib/variables';
-import auth from './authService';
 
-export const callApiAuth = async (url: string, method: string): Promise<string> => {
-	const auth0Client = await auth.createClient();
+export const callApiAuth = async (url: string, method: string, token?: string): Promise<string> => {
 	try {
-		const token = await auth0Client.getTokenSilently();
-		const bearer = 'Bearer ' + token;
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		let headers: any = {};
+
+		if (token) {
+			const bearer = 'Bearer ' + token;
+			headers = { Authorization: bearer };
+		}
 
 		const res = await fetch(`${vars.api.baseUrl}${url}`, {
-			headers: { Authorization: bearer },
+			headers: headers,
 			method
 		});
 
