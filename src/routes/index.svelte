@@ -174,11 +174,11 @@
 				</p>
 			</div>
 			<picture class="hidden lg:flex flex-row justify-center">
-				<source srcset="./images/webp/discord.webp" type="image/webp" />
-				<source srcset="./images/png/discord.png" type="image/png" />
+				<source srcset="/images/webp/discord.webp" type="image/webp" />
+				<source srcset="/images/png/discord.png" type="image/png" />
 				<img
 					class="rounded-lg w-1/2 h-auto border-2 border-gray-600"
-					src="./images/png/discord.png"
+					src="/images/png/discord.png"
 					alt="Discord bot"
 				/>
 			</picture>
@@ -240,5 +240,9 @@
 
 	#hero {
 		min-height: calc(100vh - 16rem);
+	}
+
+	.bg-circuit-pattern {
+		background-image: url('/images/svg/circuit-board.svg');
 	}
 </style>

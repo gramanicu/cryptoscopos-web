@@ -7,9 +7,6 @@ module.exports = {
 				secondary: '#B282FF',
 				tertiary: '#48277D',
 				accent: '#C99D67'
-			},
-			backgroundImage: {
-				'circuit-pattern': "url('./images/svg/circuit-board.svg')"
 			}
 		}
 	},
