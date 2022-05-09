@@ -2,32 +2,30 @@
 	import auth from '$lib/authService';
 	import { isAuthenticated, user } from '$lib/store';
 	import { scale } from 'svelte/transition';
-	import { vars } from '$lib/variables';
-	import type { Coin } from '$lib/types';
+	import type { Account, Coin } from '$lib/types';
 	import type { Auth0Client } from '@auth0/auth0-spa-js';
 	import { onMount } from 'svelte';
+	import { callApiAuth } from '$lib/api';
 
 	let isLoading = true;
 	let auth0Client: Auth0Client;
 
 	onMount(async () => {
 		auth0Client = await auth.createClient();
+
+		const newUser = await auth0Client.getUser();
+
+		if (newUser) {
+			user.set(newUser);
+			isAuthenticated.set(true);
+		}
 		isLoading = false;
 	});
 
+	let accounts: Account[] = [];
 	const callApi = async () => {
 		try {
-			const token = await auth0Client.getTokenSilently();
-			const bearer = 'Bearer ' + token;
-
-			const res = await fetch(`${vars.api.baseUrl}/accounts`, {
-				headers: { Authorization: bearer }
-			});
-
-			if (res.ok) {
-				const coins: Coin[] = await res.json();
-				console.log(coins);
-			}
+			accounts = JSON.parse(await callApiAuth('/accounts', 'get'));
 		} catch (e) {
 			console.error(e);
 		}
@@ -43,7 +41,7 @@
 			<h1 class="text-3xl font-sans mb-2 text-purple-900  justify-center">
 				Welcome to Cryptoscopos
 			</h1>
-			{#if $isAuthenticated}
+			{#if isAuthenticated}
 				<img
 					class="h-16 w-16 m-2 ring-2 ring-white rounded-full self-center"
 					alt="Profile pic"
@@ -53,8 +51,17 @@
 				<div class="flex flex-row gap-4 justify-center">
 					<button
 						class="bg-purple-100 text-purple-900 hover:bg-purple-500 rounded-lg p-2 text-sm w-fit px-6 "
-						on:click={callApi}>Call API</button
+						on:click={callApi}>Get accounts</button
 					>
+				</div>
+				<div class="prose">
+					{#if accounts.length}
+						{#each accounts as account}
+							<h3>{account.name}</h3>
+							<h4>{account.description}</h4>
+							<p>{account.coinId} {account.userId}</p>
+						{/each}
+					{/if}
 				</div>
 			{/if}
 		</div>
