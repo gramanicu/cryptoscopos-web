@@ -11,7 +11,7 @@
 
 	onMount(async () => {
 		if (!$isAuthenticated) {
-			goto('/');
+			window.location.href = '/';
 		}
 	});
 
@@ -53,7 +53,7 @@
 	<link rel="icon" href="./favicon.png" />
 </svelte:head>
 
-{#if isAuthenticated}
+{#if $isAuthenticated}
 	<nav class="bg-black border-b-2 border-primary sticky top-0 md:relative">
 		<div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-2 sm:pb-0 sm:pt-1">
 			<div class="relative flex items-center justify-between">
