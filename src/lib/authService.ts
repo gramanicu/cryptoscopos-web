@@ -1,4 +1,9 @@
-import createAuth0Client, { Auth0Client, type PopupLoginOptions } from '@auth0/auth0-spa-js';
+import createAuth0Client, {
+	Auth0Client,
+	type LogoutOptions,
+	type PopupLoginOptions,
+	type RedirectLoginOptions
+} from '@auth0/auth0-spa-js';
 import { user, isAuthenticated, popupOpen } from '$lib/store';
 import { vars } from '$lib/variables';
 
@@ -25,6 +30,23 @@ async function createClient() {
 	}
 }
 
+async function loginWithRedirect(client: Auth0Client, options: RedirectLoginOptions) {
+	try {
+		await client.loginWithRedirect(options);
+		const newUser = await client.getUser();
+
+		if (newUser) {
+			user.set(newUser);
+			isAuthenticated.set(true);
+		}
+	} catch (e) {
+		// eslint-disable-next-line
+		console.error(e);
+	} finally {
+		popupOpen.set(false);
+	}
+}
+
 async function loginWithPopup(client: Auth0Client, options: PopupLoginOptions) {
 	popupOpen.set(true);
 	try {
@@ -43,13 +65,14 @@ async function loginWithPopup(client: Auth0Client, options: PopupLoginOptions) {
 	}
 }
 
-function logout(client: Auth0Client) {
-	return client.logout();
+function logout(client: Auth0Client, options: LogoutOptions) {
+	return client.logout(options);
 }
 
 const auth = {
 	createClient,
 	loginWithPopup,
+	loginWithRedirect,
 	logout
 };
 

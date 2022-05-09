@@ -24,10 +24,40 @@
 
 <script lang="ts">
 	import '../app.scss';
+	import type { Auth0Client } from '@auth0/auth0-spa-js';
+	import { onMount } from 'svelte';
+	import auth from '$lib/authService';
+	import { isAuthenticated, user } from '$lib/store';
+	import { goto } from '$app/navigation';
 
 	export let coinCount: number;
 	export let users: number = 100;
 	export let dataPoints: number = 100;
+
+	let auth0Client: Auth0Client;
+
+	onMount(async () => {
+		auth0Client = await auth.createClient();
+
+		isAuthenticated.set(await auth0Client.isAuthenticated());
+
+		const usr = await auth0Client.getUser();
+		if (usr) {
+			user.set(usr);
+		}
+	});
+
+	async function login() {
+		if (!auth0Client) {
+			auth0Client = await auth.createClient();
+		}
+
+		await auth.loginWithPopup(auth0Client, {});
+
+		if ($isAuthenticated) {
+			goto('/dashboard');
+		}
+	}
 
 	let localCoins = 0;
 	let localUsers = 0;
@@ -47,7 +77,6 @@
 
 	async function animateStats() {
 		if (!statsAnimated) {
-			console.log('starting animation');
 			statsAnimated = true;
 			const steps = 20;
 			for (let i = 0; i < steps; i++) {
@@ -85,6 +114,17 @@
 			}
 		};
 	}
+
+	let subscribeEmail = '';
+
+	const handleSubscribeSubmit = () => {
+		fetch('/subscribeEmail', {
+			method: 'POST',
+			body: JSON.stringify({
+				email: subscribeEmail
+			})
+		});
+	};
 </script>
 
 <main
@@ -102,13 +142,14 @@
 			>
 			<div>
 				<button
+					on:click={() => login()}
 					class="py-2 px-4 border bg-white transition-colors duration-500 border-tertiary text-tertiary rounded-lg hover:bg-tertiary hover:text-white focus:ring-2 ring-primary"
 					>Sign In</button
 				>
 			</div>
 		</div>
 	</nav>
-	<section class="w-full snap-start  backdrop-blur-sm">
+	<section class="w-full snap-start backdrop-blur-sm">
 		<div id="hero" class="limited-section items-center flex flex-col gap-8 p-6 justify-center">
 			<div class="text-center prose cursor-default">
 				<h1 class="text-black text-4xl font-bold">
@@ -120,6 +161,7 @@
 				</p>
 			</div>
 			<button
+				on:click={() => login()}
 				class="py-2 px-6 align-middle border-2 text-2xl bg-transparent transition-colors duration-500 border-tertiary text-tertiary rounded-lg hover:bg-tertiary hover:text-white focus:ring-2 ring-primary"
 				>Join Us</button
 			>
@@ -202,7 +244,10 @@
 					you will be notified when we are launching them.
 				</p>
 			</div>
-			<form class="flex flex-row gap-4">
+			<form
+				on:submit|preventDefault={handleSubscribeSubmit}
+				class="flex flex-col md:flex-row gap-4"
+			>
 				<div>
 					<label for="email-address" class="sr-only">Email address</label>
 					<input
@@ -210,8 +255,9 @@
 						name="email"
 						type="email"
 						autocomplete="email"
+						bind:value={subscribeEmail}
 						required
-						class=" w-64 appearance-none relative block px-4 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-md"
+						class="w-64 appearance-none relative block px-4 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-md"
 						placeholder="Enter your email"
 					/>
 				</div>

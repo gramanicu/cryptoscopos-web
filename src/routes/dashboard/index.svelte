@@ -1,25 +1,3 @@
-<script context="module" lang="ts">
-	import type { LoadInput } from '@sveltejs/kit';
-	export async function load({ fetch }: LoadInput) {
-		const res = await fetch(`${vars.api.baseUrl}/coins`);
-
-		if (res.ok) {
-			const coins: Coin[] = await res.json();
-			return {
-				props: {
-					coins
-				}
-			};
-		}
-
-		return {
-			status: res.status,
-			error: new Error("Coulnd't fetch")
-			// redirect: '/smth'
-		};
-	}
-</script>
-
 <script lang="ts">
 	import { hasContext, onMount } from 'svelte';
 	import auth from '$lib/authService';
@@ -32,8 +10,6 @@
 	let auth0Client: Auth0Client;
 	let isLoading = true;
 
-	export let coins: Coin[];
-
 	onMount(async () => {
 		auth0Client = await auth.createClient();
 
@@ -44,8 +20,6 @@
 		if (usr) {
 			user.set(usr);
 		}
-
-		console.log(coins.length);
 	});
 
 	function login() {
@@ -53,7 +27,7 @@
 	}
 
 	function logout() {
-		auth.logout(auth0Client);
+		auth.logout(auth0Client, { returnTo: window.location.origin });
 	}
 
 	const callApi = async () => {
@@ -91,11 +65,6 @@
 					src={$user.picture}
 				/>
 				<p class="self-center mb-4">{$user.name}</p>
-				<ul>
-					{#each coins as coin}
-						<li>{coin.name}</li>
-					{/each}
-				</ul>
 				<div class="flex flex-row gap-4 justify-center">
 					<button
 						class="bg-purple-100 text-purple-900 hover:bg-purple-500 rounded-lg p-2 text-sm w-fit px-6 "
