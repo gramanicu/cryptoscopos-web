@@ -26,14 +26,14 @@
 					const stats: CoinStatistics = JSON.parse(rawStats);
 
 					coin.stats = stats;
-
-					return {
-						props: {
-							coin
-						}
-					};
 				}
 			}
+
+			return {
+				props: {
+					coin
+				}
+			};
 		}
 
 		return {
@@ -61,8 +61,10 @@
 		};
 	});
 
-	onMount(() => {
-		renderChart();
+	onMount(async () => {
+		if (coin.data) {
+			renderChart();
+		}
 		clampText = shouldClamp();
 	});
 
@@ -80,6 +82,9 @@
 				]
 			},
 			options: {
+				indexAxis: 'x',
+				animation: false,
+				parsing: false,
 				responsive: true,
 				plugins: {
 					title: {
@@ -106,10 +111,15 @@
 								return label;
 							}
 						}
+					},
+					decimation: {
+						algorithm: 'lttb',
+						enabled: true,
+						samples: 20
 					}
 				},
 				interaction: {
-					mode: 'point',
+					mode: 'nearest',
 					axis: 'x',
 					intersect: false
 				},
@@ -122,6 +132,14 @@
 						title: {
 							display: false,
 							text: 'Date & Time (UTC)'
+						},
+						grid: {
+							display: false
+						},
+						ticks: {
+							source: 'auto',
+							maxRotation: 0,
+							autoSkip: true
 						}
 					},
 					y: {
@@ -134,10 +152,12 @@
 								return '$' + value;
 							},
 							precision: 2
+						},
+						grid: {
+							display: false
 						}
 					}
-				},
-				parsing: false
+				}
 			}
 		});
 	}
@@ -193,18 +213,20 @@
 				<h1 class="font-bold text-xl sm:text-2xl ml-2 sm:ml-4">{coin.name}</h1>
 			</div>
 
-			<div class="inline-flex flex-row text-xl items-center">
-				<h2 class="mr-2">{coin.stats?.value.toFixed(2)}$</h2>
+			{#if coin.stats}
+				<div class="inline-flex flex-row text-xl items-center">
+					<h2 class="mr-2">{coin.stats?.value.toFixed(2)}$</h2>
 
-				{#if priceStatus() === 1}
-					<Icon src={TrendingUp} theme="solid" class="h-5 w-5 text-green-500" />
-				{:else if priceStatus() === -1}
-					<Icon src={TrendingDown} theme="solid" class="h-5 w-5 text-red-500" />
-				{:else}
-					<Icon src={ArrowRight} theme="solid" class="h-4 w-4 text-gray-500" />
-				{/if}
-				<small class="font-semibold text-sm">{priceDiff()}$</small>
-			</div>
+					{#if priceStatus() === 1}
+						<Icon src={TrendingUp} theme="solid" class="h-5 w-5 text-green-500" />
+					{:else if priceStatus() === -1}
+						<Icon src={TrendingDown} theme="solid" class="h-5 w-5 text-red-500" />
+					{:else}
+						<Icon src={ArrowRight} theme="solid" class="h-4 w-4 text-gray-500" />
+					{/if}
+					<small class="font-semibold text-sm">{priceDiff()}%</small>
+				</div>
+			{/if}
 		</div>
 
 		<div
@@ -240,17 +262,88 @@
 				>
 					{@html coin.information?.description}
 				</div>
-				<div class="col-span-2 mt-2 sm:col-span-6 flex flex-col items-center sm:items-end">
-					<button on:click={() => toggleShow()} class="text-sm font-semibold text-accent"
-						>{!showAll ? 'Show more' : 'Show less'}</button
-					>
-				</div>
+				{#if clampText || showAll}
+					<div class="col-span-2 mt-2 sm:col-span-6 flex flex-col items-center sm:items-end">
+						<button on:click={() => toggleShow()} class="text-sm font-semibold text-accent"
+							>{!showAll ? 'Show more' : 'Show less'}</button
+						>
+					</div>
+				{/if}
 			{/if}
 		</div>
 
-		<div class="hidden sm:block w-full max-w-3xl mt-8">
-			<canvas id="myChart" />
-		</div>
+		{#if coin.stats}
+			<div
+				class="flex flex-col sm:flex-row w-full justify-between p-4 border rounded-lg sm:divide-x shadow-md"
+			>
+				{#if coin.stats?.last_1h !== 'unavailable'}
+					<div class="flex flex-col w-full items-center">
+						<h3 class="text-lg font-light text-gray-700">Last hour</h3>
+						<div class="flex flex-row items-center">
+							{#if Number(coin.stats?.last_1h) > 0}
+								<Icon src={TrendingUp} theme="solid" class="h-4 w- text-green-500" />
+							{:else if Number(coin.stats?.last_1h) < 0}
+								<Icon src={TrendingDown} theme="solid" class="h-4 w-4 text-red-500" />
+							{:else}
+								<Icon src={ArrowRight} theme="solid" class="h-4 w-4 text-gray-500" />
+							{/if}
+							<span class="ml-1"> {Number(coin.stats?.last_1h).toFixed(2)}%</span>
+						</div>
+					</div>
+				{/if}
+				{#if coin.stats?.last_24h !== 'unavailable'}
+					<div class="flex flex-col w-full items-center">
+						<h3 class="text-lg font-light text-gray-700">Last 24 hours</h3>
+						<div class="flex flex-row items-center">
+							{#if Number(coin.stats?.last_24h) > 0}
+								<Icon src={TrendingUp} theme="solid" class="h-4 w- text-green-500" />
+							{:else if Number(coin.stats?.last_24h) < 0}
+								<Icon src={TrendingDown} theme="solid" class="h-4 w-4 text-red-500" />
+							{:else}
+								<Icon src={ArrowRight} theme="solid" class="h-4 w-4 text-gray-500" />
+							{/if}
+							<span class="ml-1"> {Number(coin.stats?.last_24h).toFixed(2)}%</span>
+						</div>
+					</div>
+				{/if}
+				{#if coin.stats?.last_7day !== 'unavailable'}
+					<div class="flex flex-col w-full items-center">
+						<h3 class="text-lg font-light text-gray-700">Last 7 days</h3>
+						<div class="flex flex-row items-center">
+							{#if Number(coin.stats?.last_7day) > 0}
+								<Icon src={TrendingUp} theme="solid" class="h-4 w- text-green-500" />
+							{:else if Number(coin.stats?.last_7day) < 0}
+								<Icon src={TrendingDown} theme="solid" class="h-4 w-4 text-red-500" />
+							{:else}
+								<Icon src={ArrowRight} theme="solid" class="h-4 w-4 text-gray-500" />
+							{/if}
+							<span class="ml-1"> {Number(coin.stats?.last_7day).toFixed(2)}%</span>
+						</div>
+					</div>
+				{/if}
+				{#if coin.stats?.last_30day !== 'unavailable'}
+					<div class="flex flex-col w-full items-center">
+						<h3 class="text-lg font-light text-gray-700">Last 30 days</h3>
+						<div class="flex flex-row items-center">
+							{#if Number(coin.stats?.last_30day) > 0}
+								<Icon src={TrendingUp} theme="solid" class="h-4 w- text-green-500" />
+							{:else if Number(coin.stats?.last_30day) < 0}
+								<Icon src={TrendingDown} theme="solid" class="h-4 w-4 text-red-500" />
+							{:else}
+								<Icon src={ArrowRight} theme="solid" class="h-4 w-4 text-gray-500" />
+							{/if}
+							<span class="ml-1"> {Number(coin.stats?.last_30day).toFixed(2)}%</span>
+						</div>
+					</div>
+				{/if}
+			</div>
+		{/if}
+
+		{#if coin.data && coin.data?.length > 0}
+			<div class="hidden sm:block w-full max-w-3xl mt-8">
+				<canvas id="myChart" />
+			</div>
+		{/if}
 	</div>
 </main>
 

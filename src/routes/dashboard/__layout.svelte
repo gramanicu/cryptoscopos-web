@@ -125,7 +125,7 @@
 		<div
 			class="{menuOpened
 				? 'block'
-				: 'hidden'} bg-black z-10 absolute w-full border-b-2 border-primary"
+				: 'hidden'} bg-black z-90 absolute w-full border-b-2 border-primary"
 			id="mobile-menu"
 		>
 			<div class="px-2 pt-2 pb-3 space-y-1">

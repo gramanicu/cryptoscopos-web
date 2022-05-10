@@ -35,3 +35,10 @@ export interface CoinStatistics {
 	last_7day: number | 'unavailable';
 	last_30day: number | 'unavailable';
 }
+
+export interface CoinSearchResults {
+	name: string;
+	gecko_id: string;
+	symbol: string;
+	is_internal: boolean;
+}
