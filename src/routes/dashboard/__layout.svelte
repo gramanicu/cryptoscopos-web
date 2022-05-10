@@ -41,11 +41,11 @@
 		{
 			url: '/dashboard/accounts',
 			name: 'Accounts'
-		},
-		{
-			url: '/dashboard/tickets',
-			name: 'Tickets'
 		}
+		// {
+		// 	url: '/dashboard/tickets',
+		// 	name: 'Tickets'
+		// }
 	];
 </script>
 

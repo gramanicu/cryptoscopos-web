@@ -1,15 +1,15 @@
 <script context="module" lang="ts">
-	import { callApiAuth } from '$lib/api';
+	import { callApi } from '$lib/api';
 	import type { Coin, CoinData, CoinStatistics } from '$lib/types';
 
 	import type { LoadInput } from '@sveltejs/kit';
 	export async function load({ fetch, params, session, props }: LoadInput) {
 		const id = params.cgid;
-		const rawCoin = await callApiAuth(`/coins/${id}`, 'GET');
+		const rawCoin = await callApi(`/coins/${id}`, 'GET');
 		if (rawCoin) {
 			const coin: Coin = JSON.parse(rawCoin);
 
-			const rawData = await callApiAuth(`/coins/${id}/data`, 'GET');
+			const rawData = await callApi(`/coins/${id}/data`, 'GET');
 
 			if (rawData) {
 				const data: CoinData[] = JSON.parse(rawData);
@@ -20,7 +20,7 @@
 					);
 				});
 
-				const rawStats = await callApiAuth(`/coins/${id}/stats`, 'GET');
+				const rawStats = await callApi(`/coins/${id}/stats`, 'GET');
 
 				if (rawStats) {
 					const stats: CoinStatistics = JSON.parse(rawStats);
@@ -145,11 +145,11 @@
 					y: {
 						title: {
 							display: false,
-							text: 'Price (in $)'
+							text: 'Price (in USD)'
 						},
 						ticks: {
 							callback: function (value, index, ticks) {
-								return '$' + value;
+								return value + 'USD';
 							},
 							precision: 2
 						},
@@ -215,7 +215,7 @@
 
 			{#if coin.stats}
 				<div class="inline-flex flex-row text-xl items-center">
-					<h2 class="mr-2">{coin.stats?.value.toFixed(2)}$</h2>
+					<h2 class="mr-2">{coin.stats?.value.toFixed(2)} USD</h2>
 
 					{#if priceStatus() === 1}
 						<Icon src={TrendingUp} theme="solid" class="h-5 w-5 text-green-500" />

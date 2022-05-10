@@ -9,11 +9,13 @@ export interface Coin {
 }
 
 export interface Account {
+	id: string;
 	name: string;
 	description: string;
 	coinId: string;
 	userId: string;
-	coin?: Coin;
+	currency?: Coin;
+	transactions?: Transaction[];
 }
 
 export interface CoinInformation {
@@ -41,4 +43,14 @@ export interface CoinSearchResults {
 	gecko_id: string;
 	symbol: string;
 	is_internal: boolean;
+}
+
+export interface Transaction {
+	id: string;
+	// How many units of the crypto were bought (+) or sold (-)
+	amount: number;
+	// How much does a unit of the crypto costs
+	value: number;
+	comment: string;
+	timestamp: string;
 }
