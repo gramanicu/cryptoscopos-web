@@ -29,39 +29,7 @@
 </script>
 
 <main class="min-h-screen min-w-full flex flex-col justify-center items-center">
-	{#if !isLoading}
-		<div
-			transition:scale
-			class="border rounded-lg shadow-md bg-purple-100 text-purple-700 p-4 flex flex-col gap-2"
-		>
-			<h1 class="text-3xl font-sans mb-2 text-purple-900  justify-center">
-				Welcome to Cryptoscopos
-			</h1>
-			{#if isAuthenticated}
-				<img
-					class="h-16 w-16 m-2 ring-2 ring-white rounded-full self-center"
-					alt="Profile pic"
-					src={$user.picture}
-				/>
-				<p class="self-center mb-4">{$user.name}</p>
-				<div class="flex flex-row gap-4 justify-center">
-					<button
-						class="bg-purple-100 text-purple-900 hover:bg-purple-500 rounded-lg p-2 text-sm w-fit px-6 "
-						on:click={callApi}>Get accounts</button
-					>
-				</div>
-				<div class="prose">
-					{#if accounts.length}
-						{#each accounts as account}
-							<h3>{account.name}</h3>
-							<h4>{account.description}</h4>
-							<p>{account.coinId} {account.userId}</p>
-						{/each}
-					{/if}
-				</div>
-			{/if}
-		</div>
-	{:else}
+	{#if isLoading}
 		<svg
 			role="status"
 			class="w-32 h-32 text-gray-200 animate-spin dark:text-gray-100 fill-purple-500"
