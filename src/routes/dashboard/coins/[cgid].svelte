@@ -205,7 +205,7 @@
 	};
 </script>
 
-<main class="min-h-screen h-full w-full flex flex-col items-center">
+<main class="h-full w-full flex flex-col items-center">
 	<div class="flex flex-col w-full max-w-3xl justify-center px-0 sm:px-4 xl:mx-4 mt-8">
 		<div class="flex flex-col sm:flex-row items-center justify-evenly">
 			<div class="flex flex-row items-center">

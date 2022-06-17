@@ -47,7 +47,7 @@
 	let modalOpen = false;
 </script>
 
-<main class="min-h-screen h-full w-full flex flex-col items-center">
+<main class=" h-full w-full flex flex-col items-center">
 	{#if !isLoading}
 		<div
 			class="w-full flex flex-row justify-between items-center max-w-2xl p-4 sm:p-8 pb-0 sm:pb-0 xl:mx-4 mt-4"

@@ -55,7 +55,7 @@
 	}
 </script>
 
-<main class="min-h-screen min-w-full flex flex-col items-center">
+<main class="min-w-full flex flex-col items-center">
 	<div class="my-4 w-full max-w-3xl flex flex-col px-0 sm:px-4 xl:mx-4 mt-8">
 		<div class="w-full overflow-hidden rounded-lg shadow-sm flex flex-row border-gray-300 border">
 			<input
@@ -109,7 +109,6 @@
 				{#if displayedCoins.length > 0}
 					{#each displayedCoins as coin}
 						<div
-							on:mouseenter={() => prefetch(`/dashboard/coins/${coin.coingeckoId}`)}
 							on:click={() => goto(`/dashboard/coins/${coin.coingeckoId}`)}
 							class="w-full min-w-full rounded-full cursor-pointer flex flex-row items-center shadow-lg p-2 md:p-4 hover:outline-tertiary border border-gray-200 outline outline-2 outline-gray-400"
 						>

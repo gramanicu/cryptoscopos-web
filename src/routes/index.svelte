@@ -1,15 +1,17 @@
 <script context="module" lang="ts">
 	import type { LoadInput } from '@sveltejs/kit';
 	import { vars } from '$lib/variables';
-	import type { Coin } from '$lib/types';
+	import type { Coin, SiteStats } from '$lib/types';
 	export async function load({ fetch }: LoadInput) {
-		const res = await fetch(`${vars.api.baseUrl}/coins`);
+		const res = await fetch(`${vars.api.baseUrl}/site-stats`);
 
 		if (res.ok) {
-			const coins: Coin[] = await res.json();
+			const stats: SiteStats = await res.json();
 			return {
 				props: {
-					coinCount: coins.length
+					coinCount: stats.coinsCount,
+					users: stats.usersCount,
+					dataPoints: stats.dataCount
 				}
 			};
 		}
@@ -29,10 +31,12 @@
 	import { auth0Client, isAuthenticated } from '$lib/store';
 	import { goto } from '$app/navigation';
 	import Logo from '$components/logo.svelte';
+	import { onMount } from 'svelte';
+	import { callApi } from '$lib/api';
 
 	export let coinCount: number;
-	export let users: number = 100;
-	export let dataPoints: number = 100;
+	export let users: number;
+	export let dataPoints: number;
 
 	let client: Auth0Client | null;
 
@@ -48,6 +52,8 @@
 			goto('/dashboard');
 		}
 	}
+
+	onMount(async () => {});
 
 	let localCoins = 0;
 	let localUsers = 0;

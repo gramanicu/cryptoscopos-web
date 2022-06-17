@@ -54,3 +54,24 @@ export interface Transaction {
 	comment: string;
 	timestamp: string;
 }
+
+export interface SiteStats {
+	usersCount: number;
+	coinsCount: number;
+	dataCount: number;
+}
+
+export interface UserStats {
+	accountCount: number;
+	alertCount: number;
+	totalProfit: number;
+	totalValue: number;
+}
+
+export interface Alert {
+	trigger: string;
+	name: string;
+	description: string;
+	id: string;
+	isActive: boolean;
+}

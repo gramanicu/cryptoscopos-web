@@ -54,7 +54,7 @@
 					}, 0),
 
 					profits: transactions.reduce((sum: number, transaction) => {
-						return (sum += transaction.value);
+						return (sum -= transaction.value * transaction.amount);
 					}, 0),
 
 					value: 0
@@ -62,6 +62,7 @@
 
 				if (loadedAccount.currency?.stats) {
 					computed.value = computed.balance * loadedAccount.currency.stats.value;
+					computed.profits += computed.value;
 				}
 			}
 
@@ -96,7 +97,7 @@
 			}, 0),
 
 			profits: account.transactions?.reduce((sum: number, transaction) => {
-				return (sum += transaction.value);
+				return (sum -= transaction.value * transaction.amount);
 			}, 0),
 
 			value: 0
@@ -104,6 +105,7 @@
 
 		if (account.currency?.stats) {
 			computed.value = computed.balance * account.currency.stats.value;
+			computed.profits += computed.value;
 		}
 	}
 
@@ -139,7 +141,7 @@
 	$: validOperation = operationBuy || newAmount < computed.balance;
 </script>
 
-<main class="min-h-screen h-full w-full flex flex-col items-center">
+<main class="h-full w-full flex flex-col items-center">
 	<div
 		class="flex flex-col w-full max-w-2xl justify-center p-4 sm:p-8 xl:mx-4 mt-8 border shadow-xl rounded-lg"
 	>
@@ -177,7 +179,22 @@
 						<span class="text-gray-400 font-semibold mr-2">Value</span>
 						<hr class="mx-2 grow" />
 						<h2 class="font-semibold text-xl">
-							{computed.value.toFixed(2)}
+							{computed.value.toLocaleString(undefined, {
+								minimumFractionDigits: 2,
+								maximumFractionDigits: 2
+							})}
+							<span>USD</span>
+						</h2>
+					</div>
+
+					<div class="mt-2 text-lg flex flex-row items-baseline justify-between">
+						<span class="text-gray-400 font-semibold mr-2">Profits</span>
+						<hr class="mx-2 grow" />
+						<h2 class="font-semibold text-xl">
+							{computed.profits.toLocaleString(undefined, {
+								minimumFractionDigits: 2,
+								maximumFractionDigits: 2
+							})}
 							<span>USD</span>
 						</h2>
 					</div>
