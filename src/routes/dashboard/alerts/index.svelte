@@ -41,7 +41,7 @@
 		</div>
 		<div class="flex flex-col w-full max-w-2xl justify-center p-4 sm:p-8 pt-0 sm:pt-0 xl:mx-4">
 			{#each alerts as alert}
-				<div class="flex flex-col w-full border p-2 rounded-lg">
+				<div class="flex flex-col w-full border p-2 mb-2 rounded-lg">
 					<span class="text-lg"><b>{alert.name}</b></span>
 					{#if alert.description}
 						<span class="text-md font-semibold text-gray-500">{alert.description}</span>{/if}
