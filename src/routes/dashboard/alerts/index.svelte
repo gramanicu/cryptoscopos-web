@@ -52,12 +52,14 @@
 					>
 					<div class="flex flex-row items-center justify-end">
 						<span>{alert.isActive ? 'Not triggered 🟢' : 'Triggered 🔴'}</span>
-						<button
-							class="ml-2 px-2 py-1 text-white bg-primary rounded-md"
-							on:click={() => {
-								resetAlert(alert.id);
-							}}>Reset</button
-						>
+						{#if !alert.isActive}
+							<button
+								class="ml-2 px-2 py-1 text-white bg-primary rounded-md"
+								on:click={() => {
+									resetAlert(alert.id);
+								}}>Reset</button
+							>
+						{/if}
 					</div>
 				</div>
 			{/each}
