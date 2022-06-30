@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onDestroy, onMount } from 'svelte';
+	import { afterUpdate, onDestroy, onMount } from 'svelte';
 	import { callApiAuth } from '$lib/api';
 	import type { Account, Coin, CoinStatistics, Transaction } from '$lib/types';
 	import { page } from '$app/stores';
@@ -40,6 +40,7 @@
 
 					coin.stats = stats;
 					loadedAccount.currency = coin;
+					coinPrice = coin.stats.value;
 				}
 			}
 
@@ -76,6 +77,7 @@
 		await loadData();
 
 		updateLoopId = setInterval(loadData, 60 * 60 * 1000);
+		newValue = coinPrice;
 		isLoading = false;
 	});
 
@@ -112,6 +114,9 @@
 	let newAmount = 0;
 	let operationBuy = true;
 	let modalShown = false;
+	let newValue = 0;
+	let coinPrice = 0;
+	let newComment = '';
 
 	async function newTransaction() {
 		if (validOperation) {
@@ -120,7 +125,9 @@
 				`/accounts/${id}/transactions/create`,
 				'POST',
 				JSON.stringify({
-					amount: newAmount * (operationBuy ? 1 : -1)
+					amount: newAmount * (operationBuy ? 1 : -1),
+					value: newValue,
+					comment: newComment
 				})
 			);
 
@@ -134,11 +141,27 @@
 		}
 
 		newAmount = 0;
+		newValue = coinPrice;
+		newComment = '';
 		operationBuy = true;
 		modalShown = false;
 	}
 
-	$: validOperation = operationBuy || newAmount < computed.balance;
+	afterUpdate(() => {
+		const transactionContainer = document.getElementById('transactionsContainer');
+		if (transactionContainer) {
+			scrollToBottomWithSmoothScroll(transactionContainer);
+		}
+	});
+
+	const scrollToBottomWithSmoothScroll = (elem: HTMLElement) => {
+		elem.scrollTo({
+			top: elem.scrollHeight,
+			behavior: 'smooth'
+		});
+	};
+
+	$: validOperation = (operationBuy || newAmount < computed.balance) && newValue > 0;
 </script>
 
 <main class="h-full w-full flex flex-col items-center">
@@ -384,6 +407,59 @@
 															autocomplete="off"
 														/>
 													</div>
+
+													<div class="flex flex-row items-end">
+														<div>
+															<label
+																for="value"
+																class="mt-2 text-left block text-sm font-medium text-gray-700"
+																>Price (1 {account.currency?.symbol.toUpperCase()})</label
+															>
+															<div class="mt-1 relative rounded-md shadow-sm">
+																<div
+																	class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+																>
+																	<span class="text-gray-500 sm:text-sm"> USD </span>
+																</div>
+
+																<input
+																	bind:value={newValue}
+																	type="number"
+																	name="value"
+																	id="value"
+																	step="0.01"
+																	class="focus:ring-indigo-500 focus:border-indigo-500 block w-fit pl-14 pr-7 sm:text-sm border-gray-300 rounded-md"
+																	placeholder={coinPrice.toLocaleString()}
+																	autocomplete="off"
+																/>
+															</div>
+														</div>
+
+														<button
+															on:click={() => {
+																newValue = coinPrice;
+															}}
+															type="button"
+															class="w-full inline-flex justify-center text-sm rounded-md border border-gray-300 shadow-sm px-2 py-2 ml-2 bg-white font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+															>Auto</button
+														>
+													</div>
+
+													<label
+														for="comment"
+														class=" text-left block text-sm font-medium text-gray-700"
+														>Comment*</label
+													>
+													<div class="mt-1 relative rounded-md shadow-sm">
+														<input
+															bind:value={newComment}
+															type="text"
+															name="commentt"
+															id="comment"
+															class="focus:ring-indigo-500 focus:border-indigo-500 block w-full px-2 sm:text-sm border-gray-300 rounded-md"
+															autocomplete="off"
+														/>
+													</div>
 												</form>
 											</div>
 										</div>
@@ -395,7 +471,7 @@
 													class="mr-auto mb-2 ml-0 sm:mb-0 sm:ml-4 inline-flex justify-center items-center text-sm font-semibold text-gray-400"
 												>
 													{operationBuy ? 'Price' : 'Profit'}: {(
-														newAmount * account.currency?.stats?.value
+														newAmount * newValue
 													).toLocaleString()} USD
 												</div>
 											{:else}
@@ -443,6 +519,7 @@
 					>
 				</div>
 				<div
+					id="transactionsContainer"
 					class="scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-300 mt-2 p-2 box-border min-w-full mx-auto grid grid-cols-4 md:grid-cols-7 max-h-80 overflow-y-auto overscroll-y-contain bg-fine-pattern"
 				>
 					{#if account.transactions}
