@@ -74,4 +74,5 @@ export interface Alert {
 	description: string;
 	id: string;
 	isActive: boolean;
+	message?: string;
 }

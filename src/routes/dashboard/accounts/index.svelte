@@ -44,7 +44,7 @@
 		accountGroups = groupBy(accounts, (account: Account) => account.currency?.name);
 	}
 
-	let modalOpen = false;
+	let accountModalOpen = false;
 </script>
 
 <main class=" h-full w-full flex flex-col items-center">
@@ -56,10 +56,10 @@
 			<button
 				class="text-lg px-4 py-2 bg-primary hover:bg-tertiary text-white rounded-lg"
 				on:click={() => {
-					modalOpen = true;
+					accountModalOpen = true;
 				}}>New Account</button
 			>
-			<CreateAccountModal {onSuccess} bind:modalShown={modalOpen} />
+			<CreateAccountModal {onSuccess} bind:modalShown={accountModalOpen} />
 		</div>
 		<div class="flex flex-col w-full max-w-2xl justify-center p-4 sm:p-8 pt-0 sm:pt-0 xl:mx-4">
 			{#each [...accountGroups.keys()] as key}

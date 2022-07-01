@@ -1,12 +1,13 @@
 <script lang="ts">
 	import { afterUpdate, onDestroy, onMount } from 'svelte';
 	import { callApiAuth } from '$lib/api';
-	import type { Account, Coin, CoinStatistics, Transaction } from '$lib/types';
+	import type { Account, Alert, Coin, CoinStatistics, Transaction } from '$lib/types';
 	import { page } from '$app/stores';
 	import Loading from '$components/loading.svelte';
 	import { Icon } from '@steeze-ui/svelte-icon';
 	import { TrendingDown, TrendingUp, ArrowRight } from '@steeze-ui/heroicons';
 	import { DateTime } from 'luxon';
+	import CreateAlertModal from '$components/createAlertModal.svelte';
 
 	interface ComputedData {
 		balance: number;
@@ -114,6 +115,14 @@
 	let newAmount = 0;
 	let operationBuy = true;
 	let modalShown = false;
+	let alertModalShown = false;
+	let alertModalSubject:
+		| { value: 'account_value'; key: 'Account value' }
+		| { value: 'account_profit'; key: 'Account profit' }
+		| { value: 'coin_value'; key: 'Coin value' } = {
+		key: 'Account value',
+		value: 'account_value'
+	};
 	let newValue = 0;
 	let coinPrice = 0;
 	let newComment = '';
@@ -160,6 +169,10 @@
 			behavior: 'smooth'
 		});
 	};
+
+	function onSuccess(alert: Alert) {
+		console.log(alert);
+	}
 
 	$: validOperation = (operationBuy || newAmount < computed.balance) && newValue > 0;
 </script>
@@ -220,6 +233,16 @@
 							})}
 							<span>USD</span>
 						</h2>
+					</div>
+					<div class="flex flex-row w-full justify-end mt-4">
+						<button
+							on:click={() => {
+								alertModalShown = true;
+							}}
+							type="button"
+							class="w-fit inline-flex justify-center text-sm rounded-md border border-gray-300 shadow-sm px-2 py-2 ml-2 bg-white font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+							>Create alert</button
+						>
 					</div>
 
 					<div class="flex flex-col mt-6 p-4 border rounded-lg">
@@ -327,6 +350,13 @@
 								{/if}
 							</div>
 						{/if}
+
+						<CreateAlertModal
+							{onSuccess}
+							{account}
+							bind:subjectType={alertModalSubject}
+							bind:modalShown={alertModalShown}
+						/>
 					</div>
 				</div>
 
